@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Back Button -->
+            <div class="mb-3">
+                <a href="{% url 'documents:list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Documents
+                </a>
+            </div>
+            
+            <!-- Document Info Card -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                    <h3 class="mb-0">
+                        <i class="bi bi-file-earmark-text"></i> Document Details
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Document Icon and Name -->
+                    <div class="text-center mb-4">
+                        <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 5rem;"></i>
+                        <h4 class="mt-3 fw-bold">{{document.original_filename}}</h4>
+                        <p class="text-muted">{{document.document_type|title}}</p>
+                    </div>
+                    
+                    <!-- Status Badge -->
+                    <div class="text-center mb-4">
+                        <span class="badge bg-warning" style="font-size: 1.1rem; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-hourglass-split"></i> Status: Pending Review
+                        </span>
+                    </div>
+                    
+                    <!-- Document Details -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">File Name</label>
+                            <p class="fw-bold">{{document.original_filename}}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Document Type</label>
+                            <p class="fw-bold">{{document.document_type|title}}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Upload Date</label>
+                            <p class="fw-bold">{{document.uploaded_at|date:"F d, Y g:i A"}}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">File Size</label>
+                            <p class="fw-bold">
+                                {% if document.file_size %}
+                                    {% if document.file_size < 1024 %}
+                                        {{document.file_size}} bytes
+                                    {% elif document.file_size < 1048576 %}
+                                        {{document.file_size|filesizeformat}}
+                                    {% else %}
+                                        {{document.file_size|filesizeformat}}
+                                    {% endif %}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- OCR Results (if available) -->
+            {% if document.extracted_text %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-text"></i> Extracted Text (OCR)</h5>
+                </div>
+                <div class="card-body">
+                    <pre class="bg-light p-3 rounded">{{document.extracted_text}}</pre>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Validation Results -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-check"></i> Validation Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle"></i> Document validation is pending. Our AI will review this document shortly.
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <i class="bi bi-hourglass-split text-warning" style="font-size: 2rem;"></i>
+                                <p class="mt-2 mb-0 fw-bold">AI Review</p>
+                                <small class="text-muted">Pending</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <i class="bi bi-file-text text-secondary" style="font-size: 2rem;"></i>
+                                <p class="mt-2 mb-0 fw-bold">OCR Extraction</p>
+                                <small class="text-muted">Coming Soon</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <i class="bi bi-check-circle text-secondary" style="font-size: 2rem;"></i>
+                                <p class="mt-2 mb-0 fw-bold">Verification</p>
+                                <small class="text-muted">Coming Soon</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <h5 class="mb-4">Actions</h5>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="{{document.file.url}}" download class="btn btn-success btn-lg">
+                            <i class="bi bi-download"></i> Download Document
+                        </a>
+                        <a href="{{document.file.url}}" target="_blank" class="btn btn-primary btn-lg">
+                            <i class="bi bi-eye"></i> View Document
+                        </a>
+                        <button class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash"></i> Delete Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle"></i> Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this document?</p>
+                <p class="fw-bold">{{document.original_filename}}</p>
+                <p class="text-danger"><i class="bi bi-exclamation-circle"></i> This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{% url 'documents:delete' document.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

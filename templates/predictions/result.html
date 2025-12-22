@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-body p-5 text-center">
+                    <h2>Prediction Result</h2>
+                    <h3 class="mt-3">{{prediction.visa_type}} - {{prediction.country}}</h3>
+                    <div class="my-5">
+                        <div class="display-1 fw-bold {% if prediction.approval_probability >= 0.8 %}text-success{% elif prediction.approval_probability >= 0.6 %}text-warning{% else %}text-danger{% endif %}">
+                            {{prediction.approval_percentage|floatformat:0}}%
+                        </div>
+                        <p class="lead">Approval Probability</p>
+                        <span class="badge bg-secondary">Risk Level: {{prediction.risk_level}}</span>
+                    </div>
+                    <div class="alert alert-info text-start">
+                        <strong>Recommendations:</strong><br>
+                        {{prediction.recommendations|linebreaks}}
+                    </div>
+                    <div class="mt-4">
+                        <a href="{% url 'predictions:predict_form' %}" class="btn btn-secondary">New Prediction</a>
+                        <a href="{% url 'predictions:dashboard' %}" class="btn btn-primary">View Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

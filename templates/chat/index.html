@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-7 text-center text-lg-start">
+                <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInUp">
+                    Your AI-Powered Immigration Assistant
+                </h1>
+                <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+                    Get instant visa guidance, ML-powered approval predictions, and document analysis - all in one platform.
+                </p>
+                <div class="d-flex flex-column flex-md-row gap-3 justify-content-center justify-content-lg-start animate__animated animate__fadeInUp animate__delay-2s">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'chat:chat' %}" class="btn btn-light btn-lg px-5">
+                        <i class="bi bi-chat-dots"></i> Start Chatting
+                    </a>
+                    <a href="{% url 'predictions:predict_form' %}" class="btn btn-outline-light btn-lg px-5">
+                        <i class="bi bi-graph-up"></i> Check Your Chances
+                    </a>
+                    {% else %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-5">
+                        <i class="bi bi-rocket-takeoff"></i> Get Started Free
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-5">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Stats -->
+                <div class="row mt-5 text-center text-lg-start">
+                    <div class="col-4">
+                        <h3 class="fw-bold">93.95%</h3>
+                        <p class="mb-0">ML Accuracy</p>
+                    </div>
+                    <div class="col-4">
+                        <h3 class="fw-bold">3M+</h3>
+                        <p class="mb-0">Training Samples</p>
+                    </div>
+                    <div class="col-4">
+                        <h3 class="fw-bold">5</h3>
+                        <p class="mb-0">Countries</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <div class="p-5">
+                    <i class="bi bi-robot" style="font-size: 15rem; opacity: 0.9;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">Powered by Advanced AI</h2>
+        <p class="lead text-muted">Three powerful features to simplify your immigration journey</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card card p-4 text-center">
+                <div class="card-body">
+                    <div class="feature-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">AI Chatbot with RAG</h4>
+                    <p class="text-muted mb-4">
+                        Get instant, accurate answers about visa requirements. Powered by GPT-4 and vector search with real embassy data.
+                    </p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Real-time visa information</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>USA, Canada, UK, Australia</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Context-aware responses</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Conversation history</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="feature-card card p-4 text-center">
+                <div class="card-body">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">ML Approval Prediction</h4>
+                    <p class="text-muted mb-4">
+                        Real XGBoost model trained on 3 million H-1B records. Not fake - genuine machine learning predictions.
+                    </p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>93.95% accuracy rate</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Trained on 3M+ samples</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Risk assessment</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Personalized recommendations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="feature-card card p-4 text-center">
+                <div class="card-body">
+                    <div class="feature-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Document Analysis</h4>
+                    <p class="text-muted mb-4">
+                        Upload and manage your visa documents. AI-powered extraction and validation coming soon.
+                    </p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Secure document storage</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Multiple file formats</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Organized by type</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Easy management</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="py-5" style="background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);">
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+            <p class="lead text-muted">Three simple steps to get started</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <h2 class="mb-0">1</h2>
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-3">Create Account</h4>
+                <p class="text-muted">Sign up for free in seconds. No credit card required.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <h2 class="mb-0">2</h2>
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-3">Ask Questions</h4>
+                <p class="text-muted">Chat with our AI about visa requirements or get ML predictions.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <h2 class="mb-0">3</h2>
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-3">Get Results</h4>
+                <p class="text-muted">Receive instant answers and data-driven insights.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Technology Stack -->
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">Built with Cutting-Edge Technology</h2>
+        <p class="lead text-muted">Real AI, not wrappers</p>
+    </div>
+    
+    <div class="row g-4 text-center">
+        <div class="col-6 col-md-3">
+            <div class="p-4">
+                <i class="bi bi-braces text-primary" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 fw-bold">Django</h5>
+                <p class="text-muted small">Full-stack Framework</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-4">
+                <i class="bi bi-stars text-primary" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 fw-bold">GPT-4</h5>
+                <p class="text-muted small">OpenAI Language Model</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-4">
+                <i class="bi bi-diagram-3 text-primary" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 fw-bold">XGBoost</h5>
+                <p class="text-muted small">ML Predictions</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-4">
+                <i class="bi bi-database text-primary" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 fw-bold">MongoDB</h5>
+                <p class="text-muted small">Vector Search</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="py-5" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+    <div class="container text-center text-white py-5">
+        <h2 class="display-4 fw-bold mb-4">Ready to Start Your Journey?</h2>
+        <p class="lead mb-4">Join thousands using AI to navigate immigration</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'predictions:dashboard' %}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-chat-dots"></i> Go to Dashboard
+        </a>
+        {% else %}
+        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-rocket-takeoff"></i> Get Started Free
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

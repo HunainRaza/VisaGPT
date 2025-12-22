@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2>Upload Document</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label>Document Type</label>
+                            <select name="document_type" class="form-select" required>
+                                <option value="passport">Passport</option>
+                                <option value="diploma">Diploma/Degree</option>
+                                <option value="bank_statement">Bank Statement</option>
+                                <option value="employment_letter">Employment Letter</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>File</label>
+                            <input type="file" name="file" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

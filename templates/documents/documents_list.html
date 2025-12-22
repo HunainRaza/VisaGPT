@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-file-earmark-text text-primary"></i> My Documents
+            </h2>
+            <p class="text-muted mb-0">Manage your visa application documents</p>
+        </div>
+        <div>
+            <a href="{% url 'documents:upload' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Upload Document
+            </a>
+        </div>
+    </div>
+    
+    <!-- Document Stats -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-text text-primary" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2 fw-bold">{{documents.count}}</h3>
+                    <p class="text-muted mb-0 small">Total Documents</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-check text-success" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2 fw-bold text-success">0</h3>
+                    <p class="text-muted mb-0 small">Verified</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-hourglass-split text-warning" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2 fw-bold text-warning">{{documents.count}}</h3>
+                    <p class="text-muted mb-0 small">Pending Review</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-hdd text-info" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2 fw-bold text-info">-</h3>
+                    <p class="text-muted mb-0 small">Storage Used</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Document Categories Tabs -->
+    <ul class="nav nav-tabs mb-4" id="documentTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button">
+                <i class="bi bi-files"></i> All Documents ({{documents.count}})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="passport-tab" data-bs-toggle="tab" data-bs-target="#passport" type="button">
+                <i class="bi bi-person-vcard"></i> Passports
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="diploma-tab" data-bs-toggle="tab" data-bs-target="#diploma" type="button">
+                <i class="bi bi-mortarboard"></i> Education
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="financial-tab" data-bs-toggle="tab" data-bs-target="#financial" type="button">
+                <i class="bi bi-bank"></i> Financial
+            </button>
+        </li>
+    </ul>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="documentTabsContent">
+        <!-- All Documents Tab -->
+        <div class="tab-pane fade show active" id="all" role="tabpanel">
+            {% if documents %}
+            <div class="row g-4">
+                {% for doc in documents %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="document-item">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{doc.file.name|truncatechars:25}}</h6>
+                                        <small class="text-muted">{{doc.document_type}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'documents:detail' doc.id %}">
+                                        <i class="bi bi-eye"></i> View
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{doc.file.url}}" download>
+                                        <i class="bi bi-download"></i> Download
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar"></i> {{doc.uploaded_at|date:"M d, Y"}}
+                            </small>
+                            <span class="badge bg-warning">
+                                <i class="bi bi-hourglass-split"></i> Pending
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-file-earmark-plus text-muted" style="font-size: 5rem;"></i>
+                <h4 class="mt-3 text-muted">No Documents Yet</h4>
+                <p class="text-muted mb-4">Upload your first document to get started</p>
+                <a href="{% url 'documents:upload' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Upload Your First Document
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Other tabs would filter by document_type -->
+        <div class="tab-pane fade" id="passport" role="tabpanel">
+            <div class="text-center py-5">
+                <i class="bi bi-person-vcard text-muted" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">No passport documents uploaded</p>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="diploma" role="tabpanel">
+            <div class="text-center py-5">
+                <i class="bi bi-mortarboard text-muted" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">No education documents uploaded</p>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="financial" role="tabpanel">
+            <div class="text-center py-5">
+                <i class="bi bi-bank text-muted" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">No financial documents uploaded</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

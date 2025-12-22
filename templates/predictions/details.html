@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Back Button -->
+            <div class="mb-3">
+                <a href="{% url 'predictions:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+            
+            <!-- Main Prediction Card -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                    <h3 class="mb-0">
+                        <i class="bi bi-graph-up-arrow"></i> Visa Prediction Analysis
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <!-- Header Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h2 class="fw-bold">{{prediction.visa_type}} - {{prediction.country}}</h2>
+                            <p class="text-muted">
+                                <i class="bi bi-calendar"></i> Created: {{prediction.created_at|date:"F d, Y g:i A"}}
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="display-3 fw-bold {% if prediction.approval_probability >= 0.8 %}text-success{% elif prediction.approval_probability >= 0.6 %}text-warning{% else %}text-danger{% endif %}">
+                                {{prediction.approval_percentage|floatformat:0}}%
+                            </div>
+                            <p class="lead">Approval Probability</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Confidence Bar -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Confidence Level</label>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill {% if prediction.approval_probability >= 0.8 %}bg-success{% elif prediction.approval_probability >= 0.6 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                 style="width: {{prediction.approval_percentage}}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Risk Level Badge -->
+                    <div class="mb-4">
+                        <span class="badge {% if prediction.risk_level == 'Low' %}bg-success{% elif prediction.risk_level == 'Medium' %}bg-warning{% else %}bg-danger{% endif %}" style="font-size: 1.1rem; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-shield-check"></i> Risk Level: {{prediction.risk_level}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Application Details -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-person-badge"></i> Applicant Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="text-muted small">Job Title</label>
+                                <p class="fw-bold mb-0">{{prediction.job_title}}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Education Level</label>
+                                <p class="fw-bold mb-0">{{prediction.education_level}}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Work Experience</label>
+                                <p class="fw-bold mb-0">{{prediction.work_experience_years}} years</p>
+                            </div>
+                            {% if prediction.age %}
+                            <div class="mb-3">
+                                <label class="text-muted small">Age</label>
+                                <p class="fw-bold mb-0">{{prediction.age}} years</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-currency-dollar"></i> Financial Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="text-muted small">Offered Salary</label>
+                                <p class="fw-bold mb-0 text-success">${{prediction.salary_offered|floatformat:0}}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Visa Type</label>
+                                <p class="fw-bold mb-0">{{prediction.visa_type}}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Target Country</label>
+                                <p class="fw-bold mb-0">
+                                    <span class="badge bg-light text-dark">{{prediction.country}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recommendations -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-0">
+                        {{prediction.recommendations|linebreaks}}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Risk Factors -->
+            {% if prediction.risk_factors %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Risk Factors to Consider</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        {% for factor in prediction.risk_factors %}
+                        <li class="mb-2">{{factor}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Action Buttons -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <h5 class="mb-4">Next Steps</h5>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="{% url 'chat:chat' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-chat-dots"></i> Chat with AI Assistant
+                        </a>
+                        <a href="{% url 'documents:upload' %}" class="btn btn-success btn-lg">
+                            <i class="bi bi-file-earmark-arrow-up"></i> Upload Documents
+                        </a>
+                        <a href="{% url 'predictions:predict_form' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-arrow-repeat"></i> New Prediction
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

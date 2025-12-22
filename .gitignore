@@ -81,3 +81,9 @@ npm-debug.log*
 # Compiled translations
 *.mo
 *.pot
+
+# Large datasets
+*.csv
+ml_engine/h1b_kaggle.csv
+ml_engine/*.csv
+2025/

@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-speedometer2 text-primary"></i> Dashboard
+            </h2>
+            <p class="text-muted mb-0">Welcome back, {{user.username}}!</p>
+        </div>
+        <div>
+            <a href="{% url 'predictions:predict_form' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Prediction
+            </a>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: var(--primary);">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total Predictions</div>
+                        <div class="stat-value">{{total_predictions}}</div>
+                    </div>
+                    <div class="stat-icon text-primary">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: var(--success);">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">High Confidence</div>
+                        <div class="stat-value text-success">{{high_confidence}}</div>
+                    </div>
+                    <div class="stat-icon text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Approval rate &gt; 80%</small>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: var(--warning);">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Documents</div>
+                        <div class="stat-value text-warning">0</div>
+                    </div>
+                    <div class="stat-icon text-warning">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Uploaded files</small>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: var(--info);">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Chat Sessions</div>
+                        <div class="stat-value text-info">Active</div>
+                    </div>
+                    <div class="stat-icon text-info">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                </div>
+                <small class="text-muted">AI conversations</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Predictions Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="predictionsChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart-fill"></i> Success Rate</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="successChart"></canvas>
+                    <div class="text-center mt-3">
+                        <div class="d-flex justify-content-around">
+                            <div>
+                                <div class="text-success fw-bold">{{high_confidence}}</div>
+                                <small class="text-muted">High (&gt;80%)</small>
+                            </div>
+                            <div>
+                                <div class="text-warning fw-bold">{{total_predictions|add:"-"|add:high_confidence}}</div>
+                                <small class="text-muted">Medium/Low</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Predictions -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Predictions</h5>
+            <a href="{% url 'predictions:predict_form' %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-plus"></i> New
+            </a>
+        </div>
+        <div class="card-body p-0">
+            {% if predictions %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Visa Type</th>
+                            <th>Country</th>
+                            <th>Job Title</th>
+                            <th>Approval Rate</th>
+                            <th>Risk Level</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pred in predictions %}
+                        <tr>
+                            <td class="fw-bold">{{pred.visa_type}}</td>
+                            <td>
+                                <span class="badge bg-light text-dark">
+                                    {{pred.country}}
+                                </span>
+                            </td>
+                            <td class="text-muted">{{pred.job_title}}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress flex-grow-1 me-2" style="height: 8px; width: 100px;">
+                                        <div class="progress-bar {% if pred.approval_probability >= 0.8 %}bg-success{% elif pred.approval_probability >= 0.6 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                             style="width: {{pred.approval_percentage}}%"></div>
+                                    </div>
+                                    <span class="fw-bold {% if pred.approval_probability >= 0.8 %}text-success{% elif pred.approval_probability >= 0.6 %}text-warning{% else %}text-danger{% endif %}">
+                                        {{pred.approval_percentage|floatformat:0}}%
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge {% if pred.risk_level == 'Low' %}bg-success{% elif pred.risk_level == 'Medium' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{pred.risk_level}}
+                                </span>
+                            </td>
+                            <td class="text-muted small">
+                                {{pred.created_at|date:"M d, Y"}}
+                            </td>
+                            <td>
+                                <a href="{% url 'predictions:detail' pred.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-graph-up text-muted" style="font-size: 4rem;"></i>
+                <h5 class="mt-3 text-muted">No Predictions Yet</h5>
+                <p class="text-muted">Get started by creating your first visa prediction</p>
+                <a href="{% url 'predictions:predict_form' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create First Prediction
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row g-4 mt-4">
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <i class="bi bi-chat-dots text-primary" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 fw-bold">Chat with AI</h5>
+                    <p class="text-muted">Get instant answers about visa requirements</p>
+                    <a href="{% url 'chat:chat' %}" class="btn btn-outline-primary">
+                        Start Chat <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <i class="bi bi-file-earmark-arrow-up text-success" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 fw-bold">Upload Documents</h5>
+                    <p class="text-muted">Manage your visa application documents</p>
+                    <a href="{% url 'documents:upload' %}" class="btn btn-outline-success">
+                        Upload <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <i class="bi bi-graph-up-arrow text-info" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 fw-bold">New Prediction</h5>
+                    <p class="text-muted">Check your visa approval chances with ML</p>
+                    <a href="{% url 'predictions:predict_form' %}" class="btn btn-outline-info">
+                        Predict <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Predictions Overview Chart
+const ctx1 = document.getElementById('predictionsChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: ['H-1B', 'F-1', 'L-1', 'Other'],
+        datasets: [{
+            label: 'Number of Predictions',
+            data: [{{total_predictions}}, 0, 0, 0],
+            backgroundColor: [
+                'rgba(79, 70, 229, 0.8)',
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(107, 114, 128, 0.8)'
+            ],
+            borderColor: [
+                'rgb(79, 70, 229)',
+                'rgb(16, 185, 129)',
+                'rgb(245, 158, 11)',
+                'rgb(107, 114, 128)'
+            ],
+            borderWidth: 2,
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+});
+
+// Success Rate Pie Chart
+const ctx2 = document.getElementById('successChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['High (>80%)', 'Medium/Low'],
+        datasets: [{
+            data: [{{high_confidence}}, {{total_predictions|add:"-"|add:high_confidence}}],
+            backgroundColor: [
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(245, 158, 11, 0.8)'
+            ],
+            borderColor: [
+                'rgb(16, 185, 129)',
+                'rgb(245, 158, 11)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

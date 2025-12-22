@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* Full-page preloader - prevents ANY flash */
+#page-preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#page-preloader .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+#page-preloader.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Hide chat until loaded */
+#chat-wrapper {
+    opacity: 0;
+}
+
+#chat-wrapper.loaded {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Full Page Preloader -->
+<div id="page-preloader">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading chat...</p>
+</div>
+
+<!-- Chat Container -->
+<div class="container-fluid px-0" style="height: calc(100vh - 56px);" id="chat-wrapper">
+    <div class="chat-container">
+        <!-- Sidebar with Conversation History -->
+        <div class="chat-sidebar">
+            <div class="mb-3">
+                <button class="btn btn-primary w-100" id="new-chat-btn">
+                    <i class="bi bi-plus-circle"></i> New Chat
+                </button>
+            </div>
+            
+            <div class="mb-2">
+                <h6 class="text-muted text-uppercase small fw-bold">Conversations</h6>
+            </div>
+            
+            <div id="conversation-list">
+                <div class="conversation-item active">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="fw-bold small">Current Chat</div>
+                            <div class="text-muted small text-truncate">Ask me about visas...</div>
+                        </div>
+                        <i class="bi bi-chevron-right small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div>
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-robot text-primary"></i> VisaGPT Assistant
+                    </h5>
+                    <small class="text-muted">AI-powered immigration guidance</small>
+                </div>
+                <div>
+                    <span class="badge bg-success">
+                        <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i> Online
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chat-messages">
+                {% if chat_messages  %}
+                    {% for msg in chat_messages %}
+                    <div class="d-flex {% if msg.role == 'user' %}justify-content-end{% endif %} mb-3">
+                        {% if msg.role == 'assistant' %}
+                        <div class="message-avatar assistant-avatar">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="chat-message {{msg.role}}-message">
+                            <div class="mb-1">
+                                <strong class="small">
+                                    {% if msg.role == 'user' %}
+                                        You
+                                    {% else %}
+                                        VisaGPT
+                                    {% endif %}
+                                </strong>
+                                <span class="text-muted small ms-2">{{msg.timestamp|date:"H:i"}}</span>
+                            </div>
+                            <div>{{msg.content}}</div>
+                        </div>
+                        
+                        {% if msg.role == 'user' %}
+                        <div class="message-avatar user-avatar ms-2">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center mt-5 pt-5">
+                    <i class="bi bi-chat-dots text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3 text-muted">Start a Conversation</h4>
+                    <p class="text-muted">Ask me anything about visa requirements, applications, or procedures</p>
+                    
+                    <!-- Suggested Questions -->
+                    <div class="row g-3 mt-4 px-5">
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm cursor-pointer suggested-question" data-question="What are H-1B visa requirements?">
+                                <div class="card-body">
+                                    <i class="bi bi-question-circle text-primary"></i>
+                                    <p class="mb-0 small fw-bold">What are H-1B visa requirements?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm cursor-pointer suggested-question" data-question="How do I apply for Canada Express Entry?">
+                                <div class="card-body">
+                                    <i class="bi bi-question-circle text-primary"></i>
+                                    <p class="mb-0 small fw-bold">How do I apply for Canada Express Entry?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm cursor-pointer suggested-question" data-question="What documents do I need for F-1 student visa?">
+                                <div class="card-body">
+                                    <i class="bi bi-question-circle text-primary"></i>
+                                    <p class="mb-0 small fw-bold">What documents do I need for F-1?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm cursor-pointer suggested-question" data-question="Tell me about UK Skilled Worker visa salary requirements">
+                                <div class="card-body">
+                                    <i class="bi bi-question-circle text-primary"></i>
+                                    <p class="mb-0 small fw-bold">UK Skilled Worker salary requirements?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Typing indicator (hidden by default) -->
+                <div id="typing-indicator" class="d-none mb-3">
+                    <div class="d-flex">
+                        <div class="message-avatar assistant-avatar">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="chat-message assistant-message">
+                            <div class="typing-indicator">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <form id="chat-form">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="message-input" 
+                            class="form-control form-control-lg border-2" 
+                            placeholder="Ask about visa requirements, applications, documents..."
+                            autocomplete="off"
+                        >
+                        <button class="btn btn-primary btn-lg px-4" type="submit" id="send-btn">
+                            <i class="bi bi-send-fill"></i> Send
+                        </button>
+                    </div>
+                    <div class="mt-2 text-muted small">
+                        <i class="bi bi-shield-check"></i> Your messages are secure and private
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.suggested-question {
+    transition: all 0.2s;
+}
+
+.suggested-question:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.chat-container {
+    max-height: calc(100vh - 56px);
+}
+
+@media (max-width: 768px) {
+    .chat-sidebar {
+        position: absolute;
+        left: -280px;
+        z-index: 1000;
+        transition: left 0.3s;
+        height: 100%;
+    }
+    
+    .chat-sidebar.show {
+        left: 0;
+    }
+}
+</style>
+
+<!-- CRITICAL: This script MUST run BEFORE page renders -->
+<script>
+// Hide preloader and show content when everything is ready
+(function() {
+    function showPage() {
+        // Hide preloader
+        var preloader = document.getElementById('page-preloader');
+        var chatWrapper = document.getElementById('chat-wrapper');
+        
+        if (preloader && chatWrapper) {
+            preloader.classList.add('hidden');
+            chatWrapper.classList.add('loaded');
+            
+            // Remove preloader after animation
+            setTimeout(function() {
+                if (preloader.parentNode) {
+                    preloader.parentNode.removeChild(preloader);
+                }
+            }, 300);
+        }
+    }
+    
+    // Wait for everything to load
+    if (document.readyState === 'complete') {
+        showPage();
+    } else {
+        window.addEventListener('load', showPage);
+    }
+    
+    // Fallback: Force show after 2 seconds max
+    setTimeout(showPage, 2000);
+})();
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const chatForm = document.getElementById('chat-form');
+const messageInput = document.getElementById('message-input');
+const chatMessages = document.getElementById('chat-messages');
+const sendBtn = document.getElementById('send-btn');
+const typingIndicator = document.getElementById('typing-indicator');
+const newChatBtn = document.getElementById('new-chat-btn');
+
+// Handle suggested questions
+document.querySelectorAll('.suggested-question').forEach(card => {
+    card.addEventListener('click', function() {
+        const question = this.getAttribute('data-question');
+        messageInput.value = question;
+        chatForm.dispatchEvent(new Event('submit'));
+    });
+});
+
+// New chat button
+newChatBtn.addEventListener('click', function() {
+    window.location.href = '{% url "chat:new_chat" %}';
+});
+
+// Send message
+chatForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const message = messageInput.value.trim();
+    if (!message) return;
+    
+    // Disable input
+    messageInput.disabled = true;
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending...';
+    
+    // Add user message to chat
+    const userMessageHtml = `
+        <div class="d-flex justify-content-end mb-3 animate__animated animate__fadeInUp">
+            <div class="chat-message user-message">
+                <div class="mb-1">
+                    <strong class="small">You</strong>
+                    <span class="text-muted small ms-2">${new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+                <div>${message}</div>
+            </div>
+            <div class="message-avatar user-avatar ms-2">
+                <i class="bi bi-person-fill"></i>
+            </div>
+        </div>
+    `;
+    
+    chatMessages.insertAdjacentHTML('beforeend', userMessageHtml);
+    messageInput.value = '';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Show typing indicator
+    typingIndicator.classList.remove('d-none');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    try {
+        // Send to backend
+        const response = await fetch('{% url "chat:chat_message" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({message: message})
+        });
+        
+        const data = await response.json();
+        
+        // Hide typing indicator
+        typingIndicator.classList.add('d-none');
+        
+        if (data.success) {
+            // Add AI response
+            const aiMessageHtml = `
+                <div class="d-flex mb-3 animate__animated animate__fadeInUp">
+                    <div class="message-avatar assistant-avatar">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="chat-message assistant-message">
+                        <div class="mb-1">
+                            <strong class="small">VisaGPT</strong>
+                            <span class="text-muted small ms-2">${new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <div>${data.response}</div>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.insertAdjacentHTML('beforeend', aiMessageHtml);
+        } else {
+            // Show error
+            const errorHtml = `
+                <div class="alert alert-danger animate__animated animate__fadeInUp">
+                    <i class="bi bi-exclamation-triangle"></i> ${data.error || 'Failed to get response'}
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', errorHtml);
+        }
+    } catch (error) {
+        typingIndicator.classList.add('d-none');
+        
+        const errorHtml = `
+            <div class="alert alert-danger animate__animated animate__fadeInUp">
+                <i class="bi bi-exclamation-triangle"></i> Network error. Please try again.
+            </div>
+        `;
+        chatMessages.insertAdjacentHTML('beforeend', errorHtml);
+    }
+    
+    // Re-enable input
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="bi bi-send-fill"></i> Send';
+    messageInput.focus();
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+});
+
+// Auto-focus input
+messageInput.focus();
+
+// Scroll to bottom on load
+chatMessages.scrollTop = chatMessages.scrollHeight;
+</script>
+{% endblock %}

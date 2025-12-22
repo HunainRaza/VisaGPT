@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account - VisaGPT{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Create Account</h2>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">
+                                Username
+                                <i class="bi bi-info-circle text-muted" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="right"
+                                   title="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."></i>
+                            </label>
+                            <input type="text" 
+                                   name="username" 
+                                   id="id_username"
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                                   value="{{ form.username.value|default:'' }}"
+                                   required>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">
+                                Password
+                                <i class="bi bi-info-circle text-muted" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="right"
+                                   data-bs-html="true"
+                                   title="<ul class='text-start mb-0'><li>At least 8 characters</li><li>Not entirely numeric</li><li>Not too common</li><li>Not too similar to username</li></ul>"></i>
+                            </label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       name="password1" 
+                                       id="id_password1"
+                                       class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                                       required>
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        id="togglePassword1">
+                                    <i class="bi bi-eye" id="eyeIcon1"></i>
+                                </button>
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password1.errors %}
+                                            {{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Password Confirmation Field -->
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">
+                                Confirm Password
+                                <i class="bi bi-info-circle text-muted" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="right"
+                                   title="Enter the same password as before, for verification."></i>
+                            </label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       name="password2" 
+                                       id="id_password2"
+                                       class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                                       required>
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        id="togglePassword2">
+                                    <i class="bi bi-eye" id="eyeIcon2"></i>
+                                </button>
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password2.errors %}
+                                            {{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100 mt-3 py-2">
+                            <i class="bi bi-person-plus"></i> Register
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-0">
+                            Already have an account? 
+                            <a href="{% url 'accounts:login' %}" class="text-decoration-none">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    © 2025 VisaGPT - AI-Powered Immigration Assistant<br>
+                    Built with Django, OpenAI GPT-4, XGBoost & MongoDB
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Toggle password visibility for password1
+    document.getElementById('togglePassword1').addEventListener('click', function() {
+        const password = document.getElementById('id_password1');
+        const icon = document.getElementById('eyeIcon1');
+        if (password.type === 'password') {
+            password.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            password.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+    
+    // Toggle password visibility for password2
+    document.getElementById('togglePassword2').addEventListener('click', function() {
+        const password = document.getElementById('id_password2');
+        const icon = document.getElementById('eyeIcon2');
+        if (password.type === 'password') {
+            password.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            password.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+});
+</script>
+{% endblock %}
+
+
+{% comment %} {% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Create Account</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
+                    </form>
+                    <p class="text-center mt-3">
+                        Already have an account? <a href="{% url 'accounts:login' %}">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% endcomment %}
