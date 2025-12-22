@@ -1,0 +1,83 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+__pycache__/
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+/static/
+
+# Django Migrations - EXCLUDE (will be generated on deployment)
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+
+# Django Cache
+*.cache
+.cache/
+
+# Environment Variables
+.env
+.env.local
+.env.production
+dev.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ML Models (uncomment if files are >100MB)
+# *.pkl
+# *.joblib
+# ml_models/*.pkl
+# ml_models/*.joblib
+
+# MongoDB
+*.log
+
+# Node modules (if using any frontend build tools)
+node_modules/
+npm-debug.log*
+
+# Compiled translations
+*.mo
+*.pot
