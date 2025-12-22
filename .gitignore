@@ -25,9 +25,9 @@ staticfiles/
 /static/
 
 # Django Migrations - EXCLUDE (will be generated on deployment)
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
+*/migrations/*
+**/migrations
+**/migrations/__init__.py
 
 # Django Cache
 *.cache
