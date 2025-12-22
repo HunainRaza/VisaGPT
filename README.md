@@ -1,7 +1,7 @@
 # 🌍 VisaGPT - AI-Powered Immigration Assistant
 
-> **Winner Submission for VisaVerse AI Hackathon 2025**  
-> Revolutionizing visa applications with Machine Learning and AI
+> **Built for VisaVerse AI Hackathon 2025**  
+> AI-powered immigration assistant combining ML, RAG, and intelligent document analysis
 
 [![Django](https://img.shields.io/badge/Django-4.2-green.svg)](https://www.djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)

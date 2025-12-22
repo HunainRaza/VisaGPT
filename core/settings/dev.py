@@ -10,12 +10,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, 'dev.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    '*', #'hunainraza.com',
-]
+ALLOWED_HOSTS = ['*']
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -35,3 +32,4 @@ DATABASES = {
 # Add OpenAI API key to settings
 OPENAI_API_KEY = env('OPENAI_API_KEY')
 MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/')
+MONGODB_DB_NAME = os.getenv('MONGODB_DB_NAME', 'VisaGPT')

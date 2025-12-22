@@ -1,59 +1,60 @@
 import os
-import environ
+from urllib.parse import urlparse
 from core.settings.common import *
 
-# Initialize environment variables
-env = environ.Env(
-    # Set default values with production-appropriate settings
-    DEBUG=(bool, False),
-    SECRET_KEY=(str, ''),
-    ALLOWED_HOSTS=(list, []),
-    DB_NAME=(str, ''),
-    DB_USER=(str, ''),
-    DB_PASSWORD=(str, ''),
-    DB_HOST=(str, ''),
-    DB_PORT=(str, '5432'),
-)
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError('SECRET_KEY environment variable is not set!')
 
-# Read .env file if it exists (optional for production)
-environ.Env.read_env(os.path.join(BASE_DIR, 'prod.env'))
+DEBUG = False
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+# ALLOWED_HOSTS - MUST be set via environment variable
+ALLOWED_HOSTS_STR = os.environ.get('ALLOWED_HOSTS', '')
+if ALLOWED_HOSTS_STR:
+    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',')]
+else:
+    ALLOWED_HOSTS = []
 
-# SECURITY WARNING: set debug to False in production!
-DEBUG = env('DEBUG')
+# Database - MUST use DATABASE_URL in production
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if not DATABASE_URL:
+    raise ValueError('DATABASE_URL environment variable is not set!')
 
-# Configure allowed hosts
-ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+url = urlparse(DATABASE_URL)
 
-# Database Configuration - Supabase PostgreSQL
-# DATABASES = {
-#     'default': {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": env('SUPABASE_DB_NAME'),
-#         "USER": env('SUPABASE_DB_USER'),
-#         "PASSWORD": env('SUPABASE_DB_PASSWORD'),
-#         "HOST": env('SUPABASE_DB_HOST'),
-#         "PORT": env('SUPABASE_DB_PORT', default='5432'),
-#         'ATOMIC_REQUESTS': True,
-#         'OPTIONS': {
-#             'sslmode': 'require',  # Supabase requires SSL connections
-#         }
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': url.path[1:],  # Remove leading '/'
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port or 5432,
+        'ATOMIC_REQUESTS': True,
+        'CONN_MAX_AGE': 600,
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
+    }
+}
 
-# Security settings
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    raise ValueError('OPENAI_API_KEY environment variable is not set!')
+
+# MongoDB Configuration
+MONGODB_URI = os.environ.get('MONGODB_URI')
+MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'VisaGPT')
+if not MONGODB_URI:
+    raise ValueError('MONGODB_URI environment variable is not set!')
+
+# Security Settings
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-
-# Cors and Security
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
 
 # Logging
 LOGGING = {
@@ -66,46 +67,6 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'WARNING',
+        'level': 'INFO',
     },
 }
-
-# Email settings (override from common.py)
-EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY')
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
-
-# Add OpenAI API key to settings
-OPENAI_API_KEY = env('OPENAI_API_KEY')
-MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/')
-
-# Static and Media Files for Production
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# Installed Apps (add any production-specific apps)
-INSTALLED_APPS += [
-    'whitenoise.runserver_nostatic',
-    'corsheaders',
-]
-
-# Middleware (add CORS middleware)
-MIDDLEWARE.insert(0, 'corsheaders.middleware.CorsMiddleware')
-MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-
-# Supabase Storage Configuration
-SUPABASE_URL = env('SUPABASE_URL')
-SUPABASE_ACCESS_KEY = env('SUPABASE_ACCESS_KEY')  # The anon/public key
-SUPABASE_SECRET_KEY = env('SUPABASE_SECRET_KEY')  # The service_role key (for more secure operations)
-SUPABASE_STORAGE_BUCKET_NAME = env('SUPABASE_STORAGE_BUCKET_NAME', default='my-portfolio')
-
-# Media configuration
-DEFAULT_FILE_STORAGE = 'core.storage_backends.SupabaseStorage'
-MEDIA_URL = '/media/'  # This will be prefixed to your URLs in templates
-
-# Allow Supabase Storage domain in CORS settings if needed
-if SUPABASE_URL:
-    parsed_url = SUPABASE_URL.rstrip('/').split('/')[-1]
-    supabase_domain = f"https://{parsed_url}.supabase.co"
-    if supabase_domain not in CORS_ALLOWED_ORIGINS:
-        CORS_ALLOWED_ORIGINS.append(supabase_domain)
