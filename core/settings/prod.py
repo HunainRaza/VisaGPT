@@ -25,7 +25,7 @@ url = urlparse(DATABASE_URL)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': url.path[1:],  # Remove leading '/'
+        'NAME': url.path[1:],
         'USER': url.username,
         'PASSWORD': url.password,
         'HOST': url.hostname,
@@ -48,11 +48,21 @@ MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'VisaGPT')
 if not MONGODB_URI:
     raise ValueError('MONGODB_URI environment variable is not set!')
 
+# Supabase Storage
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+SUPABASE_BUCKET = os.environ.get('SUPABASE_BUCKET')
+
+if SUPABASE_URL and SUPABASE_KEY:
+    DEFAULT_FILE_STORAGE = 'core.storage_backends.SupabaseStorage'
+else:
+    print("⚠️ SUPABASE_URL or SUPABASE_KEY not set - using local storage")
+
 # Security Settings
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
