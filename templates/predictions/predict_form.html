@@ -1,57 +1,286 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-lg-6 mx-auto">
-            <h2 class="text-center mb-4"><i class="bi bi-graph-up"></i> Visa Approval Prediction</h2>
-            <div class="card shadow">
-                <div class="card-body p-4">
-                    <form method="POST" action="{% url 'predictions:predict' %}">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Back Button (OUTSIDE the card) -->
+            <div class="mb-3">
+                <a href="{% url 'predictions:predict_form' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Back to Visa Selection
+                </a>
+            </div>
+            
+            <!-- Form Card -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-graph-up"></i> H-1B Visa Approval Prediction
+                    </h3>
+                    <p class="mb-0 small">Get AI-powered probability analysis based on 3M+ real applications</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'predictions:predict' %}">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label>Visa Type</label>
-                            <select name="visa_type" class="form-select" required>
-                                <option value="H-1B">H-1B (Work Visa)</option>
-                                <option value="F-1">F-1 (Student Visa)</option>
-                                <option value="L-1">L-1 (Intra-company Transfer)</option>
-                            </select>
+                        
+                        <!-- Visa Type (Hidden for now - only H-1B supported) -->
+                        <input type="hidden" name="visa_type" value="H-1B">
+                        <input type="hidden" name="country" value="USA">
+                        
+                        <!-- Job Information -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-briefcase"></i> Job Information
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="job_title" class="form-label">
+                                    Job Title <span class="text-danger">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="job_title" 
+                                    name="job_title"
+                                    placeholder="e.g., Software Engineer, Data Analyst, Marketing Manager"
+                                    required
+                                >
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle"></i> 
+                                    Be specific - include your actual job title as it will appear on the petition
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label>Country</label>
-                            <select name="country" class="form-select" required>
-                                <option value="USA">United States</option>
-                                <option value="Canada">Canada</option>
-                                <option value="UK">United Kingdom</option>
-                            </select>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="salary" class="form-label">
+                                    Annual Salary (USD) <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="salary" 
+                                        name="salary"
+                                        min="20000"
+                                        max="500000"
+                                        placeholder="e.g., 75000"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-text">
+                                    Offered annual salary in USD
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="employment_type" class="form-label">
+                                    Employment Type <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="employment_type" name="employment_type" required>
+                                    <option value="full-time">Full-Time</option>
+                                    <option value="part-time">Part-Time</option>
+                                </select>
+                                <div class="form-text">
+                                    Full-time positions have higher approval rates
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label>Job Title</label>
-                            <input type="text" name="job_title" class="form-control" required>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="employer_size" class="form-label">
+                                    Employer Size <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="employer_size" name="employer_size" required>
+                                    <option value="">Select employer size...</option>
+                                    <option value="startup">Startup (1-50 employees)</option>
+                                    <option value="small">Small Company (51-500)</option>
+                                    <option value="medium">Medium Company (501-5000)</option>
+                                    <option value="large">Large Company (5000+)</option>
+                                    <option value="fortune500">Fortune 500</option>
+                                </select>
+                                <div class="form-text">
+                                    Larger companies often have more H-1B experience
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">
+                                    Work Location (State) <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="location" name="location" required>
+                                    <option value="">Select state...</option>
+                                    <option value="California">California</option>
+                                    <option value="New York">New York</option>
+                                    <option value="Texas">Texas</option>
+                                    <option value="Washington">Washington</option>
+                                    <option value="Massachusetts">Massachusetts</option>
+                                    <option value="Illinois">Illinois</option>
+                                    <option value="New Jersey">New Jersey</option>
+                                    <option value="Virginia">Virginia</option>
+                                    <option value="Florida">Florida</option>
+                                    <option value="Pennsylvania">Pennsylvania</option>
+                                    <option value="Other">Other State</option>
+                                </select>
+                                <div class="form-text">
+                                    Tech hubs typically have higher approval rates
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label>Salary (USD)</label>
-                            <input type="number" name="salary" class="form-control" required>
+                        
+                        <!-- Personal Information -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-person"></i> Personal Information
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="age" class="form-label">
+                                    Age <span class="text-danger">*</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    class="form-control" 
+                                    id="age" 
+                                    name="age"
+                                    min="21"
+                                    max="65"
+                                    placeholder="e.g., 28"
+                                    required
+                                >
+                                <div class="form-text">
+                                    Younger applicants often preferred
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label for="education" class="form-label">
+                                    Highest Education <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="education" name="education" required>
+                                    <option value="">Select...</option>
+                                    <option value="Bachelors">Bachelor's Degree</option>
+                                    <option value="Masters">Master's Degree</option>
+                                    <option value="PhD">PhD / Doctorate</option>
+                                </select>
+                                <div class="form-text">
+                                    Advanced degrees increase approval chances
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label for="experience" class="form-label">
+                                    Years of Experience <span class="text-danger">*</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    class="form-control" 
+                                    id="experience" 
+                                    name="experience"
+                                    min="0"
+                                    max="40"
+                                    placeholder="e.g., 3"
+                                    required
+                                >
+                                <div class="form-text">
+                                    Work experience in your field
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label>Age</label>
-                            <input type="number" name="age" class="form-control" required>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="degree_relevance" class="form-label">
+                                    Degree Relevance to Job <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="degree_relevance" name="degree_relevance" required>
+                                    <option value="">Select...</option>
+                                    <option value="exact">Exact Match (e.g., CS degree for Software Engineer)</option>
+                                    <option value="related">Related Field (e.g., Math for Data Analyst)</option>
+                                    <option value="unrelated">Unrelated (e.g., Art for Software Engineer)</option>
+                                </select>
+                                <div class="form-text">
+                                    Degree relevance is crucial for specialty occupation requirement
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="previous_h1b" class="form-label">
+                                    Previous H-1B Experience <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="previous_h1b" name="previous_h1b" required>
+                                    <option value="no">No - First H-1B Application</option>
+                                    <option value="yes">Yes - Previously had H-1B</option>
+                                    <option value="transfer">Yes - H-1B Transfer</option>
+                                </select>
+                                <div class="form-text">
+                                    Transfers and renewals often have better success rates
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label>Education Level</label>
-                            <select name="education" class="form-select" required>
-                                <option value="Bachelors">Bachelor's Degree</option>
-                                <option value="Masters">Master's Degree</option>
-                                <option value="PhD">PhD</option>
-                            </select>
+                        
+                        <!-- Alert Box -->
+                        <div class="alert alert-info mt-4">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-lightbulb"></i> How This Works
+                            </h6>
+                            <ul class="mb-0 small">
+                                <li>Our ML model analyzes <strong>3+ million real H-1B applications</strong> from 2011-2016</li>
+                                <li>Prediction accuracy: <strong>74.4%</strong> on balanced dataset</li>
+                                <li>Results are estimates based on statistical patterns, not guarantees</li>
+                                <li>Always consult with an immigration attorney for your specific case</li>
+                            </ul>
                         </div>
-                        <div class="mb-3">
-                            <label>Work Experience (years)</label>
-                            <input type="number" name="experience" class="form-control" required>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-calculator"></i> Calculate Approval Probability
+                            </button>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 mt-3">
-                            <i class="bi bi-cpu"></i> Predict Approval Chances
-                        </button>
                     </form>
+                </div>
+            </div>
+            
+            <!-- Info Cards -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <h6 class="card-title text-success">
+                                <i class="bi bi-check-circle"></i> Factors That Help
+                            </h6>
+                            <ul class="small mb-0">
+                                <li>Tech/STEM jobs</li>
+                                <li>High salary (above prevailing wage)</li>
+                                <li>Full-time position</li>
+                                <li>Large, established employer</li>
+                                <li>Advanced degree (Master's/PhD)</li>
+                                <li>Relevant degree for job</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-danger">
+                        <div class="card-body">
+                            <h6 class="card-title text-danger">
+                                <i class="bi bi-exclamation-circle"></i> Risk Factors
+                            </h6>
+                            <ul class="small mb-0">
+                                <li>Low salary (<$50k)</li>
+                                <li>Part-time position</li>
+                                <li>Non-specialty occupation</li>
+                                <li>Unrelated degree</li>
+                                <li>Small/unknown employer</li>
+                                <li>Limited experience</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

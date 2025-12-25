@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}Choose Visa Type - VisaGPT{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="bi bi-globe2"></i> Choose Your Visa Type
+                </h1>
+                <p class="lead text-muted">
+                    Select the country and visa type you'd like to evaluate
+                </p>
+            </div>
+
+            <!-- Visa Options Grid -->
+            <div class="row g-4">
+                <!-- USA - H-1B Visa -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-lg hover-card">
+                        <div class="card-body p-5 text-center">
+                            <!-- Flag Icon -->
+                            <div class="mb-4">
+                                <i class="bi bi-flag-usa display-1 text-primary"></i>
+                            </div>
+                            
+                            <!-- Title -->
+                            <h3 class="fw-bold mb-3">H-1B Visa (USA)</h3>
+                            
+                            <!-- Description -->
+                            <p class="text-muted mb-4">
+                                Get AI-powered approval probability prediction using our machine learning model trained on 3+ million real H-1B applications.
+                            </p>
+                            
+                            <!-- Features -->
+                            <div class="text-start mb-4">
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>ML Prediction (74.4% accuracy)</span>
+                                </div>
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Personalized recommendations</span>
+                                </div>
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Risk factor analysis</span>
+                                </div>
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Instant results</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Badge -->
+                            <div class="mb-4">
+                                <span class="badge bg-primary px-3 py-2">
+                                    <i class="bi bi-robot"></i> AI-Powered ML Model
+                                </span>
+                            </div>
+                            
+                            <!-- CTA Button -->
+                            <a href="{% url 'predictions:h1b_form' %}" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-graph-up-arrow"></i> Check H-1B Approval Probability
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canada - Express Entry -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-lg hover-card">
+                        <div class="card-body p-5 text-center">
+                            <!-- Flag Icon -->
+                            <div class="mb-4">
+                                <i class="bi bi-flag display-1 text-danger"></i>
+                            </div>
+                            
+                            <!-- Title -->
+                            <h3 class="fw-bold mb-3">Express Entry (Canada)</h3>
+                            
+                            <!-- Description -->
+                            <p class="text-muted mb-4">
+                                Calculate your Comprehensive Ranking System (CRS) score for Canadian permanent residency through Express Entry.
+                            </p>
+                            
+                            <!-- Features -->
+                            <div class="text-start mb-4">
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>CRS score calculator</span>
+                                </div>
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Detailed score breakdown</span>
+                                </div>
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Improvement suggestions</span>
+                                </div>
+                                <div class="feature-item mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Recent cutoff comparison</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Badge -->
+                            <div class="mb-4">
+                                <span class="badge bg-danger px-3 py-2">
+                                    <i class="bi bi-calculator"></i> Official CRS Calculator
+                                </span>
+                            </div>
+                            
+                            <!-- CTA Button -->
+                            <a href="{% url 'predictions:canada_calculator' %}" class="btn btn-danger btn-lg w-100">
+                                <i class="bi bi-calculator-fill"></i> Calculate CRS Score
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Info Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="mb-2">
+                                        <i class="bi bi-chat-dots-fill text-primary"></i> Need Help Deciding?
+                                    </h5>
+                                    <p class="mb-0 text-muted">
+                                        Our AI chatbot can help you understand the differences between visa types and recommend the best option for your situation.
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <a href="{% url 'chat:chat' %}" class="btn btn-outline-primary">
+                                        <i class="bi bi-chat-dots"></i> Chat with AI Assistant
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coming Soon Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="text-center">
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-stars"></i> Coming Soon: UK Skilled Worker Visa, Australia 189 Visa, and more!
+                        </p>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <span class="badge bg-secondary opacity-50">
+                                <i class="bi bi-flag"></i> UK Skilled Worker
+                            </span>
+                            <span class="badge bg-secondary opacity-50">
+                                <i class="bi bi-flag"></i> Australia 189
+                            </span>
+                            <span class="badge bg-secondary opacity-50">
+                                <i class="bi bi-flag"></i> Germany Blue Card
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-card {
+    transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+}
+
+.feature-item {
+    font-size: 0.95rem;
+}
+
+.feature-item i {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .display-1 {
+        font-size: 4rem;
+    }
+}
+</style>
+{% endblock %}

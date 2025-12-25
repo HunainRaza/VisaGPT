@@ -115,8 +115,8 @@
                     <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Recommendations</h5>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info mb-0">
-                        {{prediction.recommendations|linebreaks}}
+                    <div class="alert alert-info alert-permanent mb-0">
+                        {{prediction.recommendations|safe|linebreaks}}
                     </div>
                 </div>
             </div>

@@ -14,9 +14,9 @@
                         <p class="lead">Approval Probability</p>
                         <span class="badge bg-secondary">Risk Level: {{prediction.risk_level}}</span>
                     </div>
-                    <div class="alert alert-info text-start">
+                    <div class="alert alert-info alert-permanent text-start">
                         <strong>Recommendations:</strong><br>
-                        {{prediction.recommendations|linebreaks}}
+                        {{prediction.recommendations|safe|linebreaks}}
                     </div>
                     <div class="mt-4">
                         <a href="{% url 'predictions:predict_form' %}" class="btn btn-secondary">New Prediction</a>

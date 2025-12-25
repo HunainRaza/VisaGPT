@@ -49,10 +49,29 @@
                             <i class="bi bi-chat-dots"></i> Chat
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'predict_form' %}active{% endif %}" href="{% url 'predictions:predict_form' %}">
-                            <i class="bi bi-graph-up"></i> Predict
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if 'predict' in request.resolver_match.url_name or 'canada' in request.resolver_match.url_name %}active{% endif %}" 
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-graph-up"></i> Predictions
                         </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'predictions:predict_form' %}">
+                                    <i class="bi bi-globe2"></i> Choose Visa Type
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'predictions:h1b_form' %}">
+                                    <i class="bi bi-flag-usa"></i> H-1B (USA)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'predictions:canada_calculator' %}">
+                                    <i class="bi bi-flag text-danger"></i> Express Entry (Canada)
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'upload' %}active{% endif %}" href="{% url 'documents:upload' %}">
@@ -130,9 +149,9 @@
                     <h6 class="fw-bold mb-3">Features</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-2"><i class="bi bi-check2 text-success"></i> AI Chat Assistant</li>
-                        <li class="mb-2"><i class="bi bi-check2 text-success"></i> ML Predictions (93.95%)</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-success"></i> ML Predictions (74.4%)</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-success"></i> Multi-Country Support</li>
                         <li class="mb-2"><i class="bi bi-check2 text-success"></i> Document Management</li>
-                        <li class="mb-2"><i class="bi bi-check2 text-success"></i> Real-time Guidance</li>
                     </ul>
                 </div>
                 <div class="col-md-4">

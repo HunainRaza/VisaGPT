@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Canada Express Entry Calculator - VisaGPT{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <!-- Back Button (OUTSIDE all cards) -->
+            <div class="mb-3">
+                <a href="{% url 'predictions:predict_form' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Back to Visa Selection
+                </a>
+            </div>
+            
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold">
+                    <i class="bi bi-flag text-danger"></i> Canada Express Entry Calculator
+                </h1>
+                <p class="lead text-muted">Calculate your Comprehensive Ranking System (CRS) Score</p>
+            </div>
+
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calculator"></i> CRS Score Calculator
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="canadaForm">
+                        {% csrf_token %}
+                        
+                        <!-- Core Human Capital Factors -->
+                        <div class="section-header">
+                            <h5 class="border-bottom pb-2 mb-4">
+                                <i class="bi bi-person-circle"></i> Core Human Capital Factors
+                            </h5>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    Age <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control form-control-lg" 
+                                       name="age" min="18" max="65" required
+                                       placeholder="Enter your age">
+                                <small class="text-muted">Maximum points at 20-29 years old</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    Education Level <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select form-select-lg" name="education" required>
+                                    <option value="">Select education level...</option>
+                                    <option value="high_school">High School Diploma</option>
+                                    <option value="one_year">1-Year Post-Secondary Certificate</option>
+                                    <option value="two_year">2-Year Diploma or Degree</option>
+                                    <option value="bachelors">Bachelor's Degree (3+ years)</option>
+                                    <option value="masters">Master's Degree or Professional Degree</option>
+                                    <option value="phd">Doctoral Degree (PhD)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    First Official Language <span class="text-danger">*</span>
+                                    <i class="bi bi-info-circle" data-bs-toggle="tooltip" 
+                                       title="English (IELTS, CELPIP) or French (TEF, TCF)"></i>
+                                </label>
+                                <select class="form-select form-select-lg" name="language_first" required>
+                                    <option value="beginner">Beginner (CLB 4 or less)</option>
+                                    <option value="moderate">Moderate (CLB 5-6)</option>
+                                    <option value="good">Good (CLB 7)</option>
+                                    <option value="advanced">Advanced (CLB 8)</option>
+                                    <option value="fluent">Fluent (CLB 9+)</option>
+                                </select>
+                                <small class="text-muted">CLB = Canadian Language Benchmark</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    Second Official Language
+                                    <i class="bi bi-info-circle" data-bs-toggle="tooltip" 
+                                       title="Bonus points for knowing both English and French"></i>
+                                </label>
+                                <select class="form-select form-select-lg" name="language_second">
+                                    <option value="none">None / Not tested</option>
+                                    <option value="moderate">Moderate (CLB 5-6)</option>
+                                    <option value="good">Good (CLB 7+)</option>
+                                    <option value="advanced">Advanced (CLB 8+)</option>
+                                    <option value="fluent">Fluent (CLB 9+)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    Canadian Work Experience (years)
+                                </label>
+                                <input type="number" class="form-control form-control-lg" 
+                                       name="canadian_work" min="0" max="10" value="0"
+                                       placeholder="Years of work in Canada">
+                                <small class="text-muted">Skilled work experience in Canada (NOC 0, A, or B)</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    Foreign Work Experience (years) <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control form-control-lg" 
+                                       name="foreign_work" min="0" max="20" required
+                                       placeholder="Years of work outside Canada">
+                                <small class="text-muted">Skilled work experience outside Canada</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Factors -->
+                        <div class="section-header mt-5">
+                            <h5 class="border-bottom pb-2 mb-4">
+                                <i class="bi bi-star-fill"></i> Additional Points Factors
+                            </h5>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-success">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="provincial_nomination" value="yes" id="pnp">
+                                            <label class="form-check-label fw-bold" for="pnp">
+                                                Provincial Nomination Program (PNP)
+                                                <span class="badge bg-success ms-2">+600 points</span>
+                                            </label>
+                                            <small class="d-block text-muted mt-1">
+                                                Nomination from a Canadian province
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="arranged_employment" value="yes" id="job">
+                                            <label class="form-check-label fw-bold" for="job">
+                                                Valid Job Offer (LMIA)
+                                                <span class="badge bg-primary ms-2">+200 points</span>
+                                            </label>
+                                            <small class="d-block text-muted mt-1">
+                                                Valid job offer with positive LMIA
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-info">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="french_proficiency" value="yes" id="french">
+                                            <label class="form-check-label" for="french">
+                                                Strong French Skills
+                                                <span class="badge bg-info ms-2">+50</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-info">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="canadian_education" value="yes" id="canedu">
+                                            <label class="form-check-label" for="canedu">
+                                                Canadian Education
+                                                <span class="badge bg-info ms-2">+30</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-info">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="sibling" value="yes" id="sibling">
+                                            <label class="form-check-label" for="sibling">
+                                                Sibling in Canada
+                                                <span class="badge bg-info ms-2">+15</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Info Box -->
+                        <div class="alert alert-light border mb-4">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-info-circle-fill text-primary"></i> CRS Score Information
+                            </h6>
+                            <hr>
+                            <div class="row small">
+                                <div class="col-md-6">
+                                    <strong>Maximum Score:</strong> 1,200 points<br>
+                                    <strong>Recent Cutoff:</strong> 491 points (Nov 2024)<br>
+                                    <strong>Typical Range:</strong> 470-510 points
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Score 500+:</strong> High chance of ITA<br>
+                                    <strong>Score 470-500:</strong> Good chance<br>
+                                    <strong>Score &lt;470:</strong> Needs improvement
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-calculator-fill"></i> Calculate CRS Score
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Help Section -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="mb-3">
+                        <i class="bi bi-question-circle-fill text-primary"></i> Need Help Understanding Your Score?
+                    </h6>
+                    <p class="mb-2">Our AI chatbot can answer questions about:</p>
+                    <ul class="small mb-3">
+                        <li>How to improve your CRS score</li>
+                        <li>Provincial Nominee Programs (PNP)</li>
+                        <li>Language test requirements (IELTS, CELPIP, TEF)</li>
+                        <li>Educational Credential Assessment (ECA)</li>
+                    </ul>
+                    <a href="{% url 'chat:chat' %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-chat-dots"></i> Ask AI Assistant
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.section-header h5 {
+    color: #dc3545;
+}
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

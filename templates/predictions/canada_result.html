@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block title %}Canada CRS Score Result - VisaGPT{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Result Card -->
+            <div class="card shadow-lg border-0 animate__animated animate__fadeInUp">
+                <div class="card-header bg-danger text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="bi bi-flag"></i> Canada Express Entry CRS Score
+                    </h3>
+                </div>
+                
+                <div class="card-body p-5 text-center">
+                    <!-- Main Score Display -->
+                    <div class="mb-4">
+                        <div class="display-1 fw-bold text-{% if result_type == 'success' %}success{% elif result_type == 'warning' %}warning{% else %}danger{% endif %}">
+                            {{ total_score }}
+                        </div>
+                        <p class="lead text-muted mb-0">out of 1,200 points</p>
+                    </div>
+                    
+                    <!-- Status Message -->
+                    <div class="alert alert-{{ result_type }} alert-permanent mb-4">
+                        <h5 class="alert-heading mb-2">{{ message|safe }}</h5>
+                        <hr>
+                        <p class="mb-0">{{ recommendation|safe }}</p>
+                    </div>
+                    
+                    <!-- Score Breakdown -->
+                    <div class="text-start mb-4">
+                        <h5 class="mb-3">
+                            <i class="bi bi-bar-chart-fill"></i> Score Breakdown
+                        </h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Category</th>
+                                        <th class="text-end">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category, points in breakdown.items %}
+                                    <tr>
+                                        <td>
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            {{ category }}
+                                        </td>
+                                        <td class="text-end fw-bold">{{ points }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot class="table-primary">
+                                    <tr>
+                                        <th>Total CRS Score</th>
+                                        <th class="text-end">{{ total_score }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if additional_details %}
+                    <!-- Additional Points Details -->
+                    <div class="alert alert-info text-start mb-4">
+                        <h6 class="mb-2">
+                            <i class="bi bi-star-fill"></i> Additional Points Applied:
+                        </h6>
+                        <ul class="mb-0">
+                            {% for detail in additional_details %}
+                            <li>{{ detail }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Recent Draw Context -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-graph-up"></i> Recent Express Entry Draws
+                            </h6>
+                            <div class="row text-center small">
+                                <div class="col-md-4">
+                                    <div class="mb-1"><strong>Latest Cutoff</strong></div>
+                                    <div class="h4 text-primary">491</div>
+                                    <div class="text-muted">Nov 2024</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-1"><strong>Typical Range</strong></div>
+                                    <div class="h4 text-info">470-510</div>
+                                    <div class="text-muted">2024 Average</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-1"><strong>Your Score</strong></div>
+                                    <div class="h4 text-{{ result_type }}">{{ total_score }}</div>
+                                    <div class="text-muted">
+                                        {% if total_score >= 500 %}
+                                            Above Average
+                                        {% elif total_score >= 470 %}
+                                            Competitive
+                                        {% else %}
+                                            Needs Improvement
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Improvement Tips -->
+                    {% if result_type != 'success' %}
+                    <div class="card border-warning mb-4 text-start">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0">
+                                <i class="bi bi-lightbulb-fill"></i> Ways to Improve Your Score
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li><strong>Language Tests:</strong> Aim for CLB 9+ in all abilities (can add 50+ points)</li>
+                                <li><strong>Education:</strong> Consider a Master's degree (+15 points over Bachelor's)</li>
+                                <li><strong>Work Experience:</strong> Each additional year helps (up to 5 years)</li>
+                                <li><strong>Provincial Nomination:</strong> Guarantees ITA (+600 points)</li>
+                                <li><strong>Job Offer:</strong> LMIA-supported offer (+200 points)</li>
+                                <li><strong>French Language:</strong> Strong French skills (+50 points)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="{% url 'predictions:canada_calculator' %}" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-arrow-repeat"></i> Recalculate Score
+                        </a>
+                        <a href="{% url 'chat:chat' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-chat-dots"></i> Ask AI About Canada Immigration
+                        </a>
+                        <a href="{% url 'predictions:predict_form' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-globe"></i> Try H-1B Prediction
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Next Steps Card -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i class="bi bi-list-check"></i> Next Steps for Express Entry
+                    </h5>
+                    <ol class="mb-0">
+                        <li class="mb-2">
+                            <strong>Take Language Tests:</strong> IELTS/CELPIP (English) or TEF/TCF (French)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Get ECA:</strong> Educational Credential Assessment for foreign degrees
+                        </li>
+                        <li class="mb-2">
+                            <strong>Create Express Entry Profile:</strong> Online through IRCC website
+                        </li>
+                        <li class="mb-2">
+                            <strong>Enter Pool:</strong> Your profile enters the candidate pool
+                        </li>
+                        <li class="mb-2">
+                            <strong>Wait for ITA:</strong> Invitation to Apply (if score is high enough)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Submit Application:</strong> 60 days to submit full PR application
+                        </li>
+                    </ol>
+                    
+                    <div class="alert alert-info mt-3 mb-0">
+                        <strong>💡 Pro Tip:</strong> Our AI chatbot can answer detailed questions about 
+                        each step of the Express Entry process!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.animate__animated {
+    animation-duration: 0.6s;
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+.animate__fadeInUp {
+    animation-name: fadeInUp;
+}
+</style>
+{% endblock %}
