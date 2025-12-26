@@ -324,7 +324,7 @@ python ml_engine/train_model.py
 ![Landing Page](screenshots/landing-page.png)
 
 ### Chat Interface
-![Chat with RAG](screenshots/Chat-interface.png)
+![Chat with RAG](screenshots/Chat-Interface.png)
 
 ### ML Predictions Dashboard
 ![Dashboard](screenshots/ML-Predictions-Dashboard.png)
