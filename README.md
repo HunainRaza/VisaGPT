@@ -4,10 +4,11 @@
 > AI-powered immigration assistant combining ML, RAG, and intelligent document analysis
 
 [![Django](https://img.shields.io/badge/Django-4.2-green.svg)](https://www.djangoproject.com/)
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-orange.svg)](https://openai.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Vector%20Search-green.svg)](https://www.mongodb.com/)
-[![XGBoost](https://img.shields.io/badge/XGBoost-93.95%25%20Accuracy-red.svg)](https://xgboost.readthedocs.io/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-74.4%25%20Accuracy-red.svg)](https://xgboost.readthedocs.io/)
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://visagpt.onrender.com)
 
 ---
 
@@ -17,15 +18,15 @@
 
 ### 🏆 Key Achievements
 
-- ✅ **93.95% ML Accuracy** on 3+ million H-1B visa records
+- ✅ **74.4% ML Accuracy** on balanced 375K H-1B test samples (3M+ training records)
 - ✅ **Real RAG System** with GPT-4 and MongoDB vector search
 - ✅ **Production-Ready** full-stack Django application
-- ✅ **Professional UI** with ChatGPT-style interface
-- ✅ **Complete CRUD** for document management
+- ✅ **Multi-Country Support** - USA, Canada, UK, Australia
+- ✅ **Complete Document Management** with secure cloud storage
 
 ---
 
-## ✨ Features
+# ✨ Features
 
 ### 🤖 1. AI-Powered Chatbot with RAG
 - **GPT-4 Integration** for natural language processing
@@ -34,26 +35,24 @@
 - **Real-Time Chat** with typing indicators
 - **Knowledge Base** covering USA, Canada, UK, and Australia visa requirements
 
-### 📊 2. ML-Powered Visa Predictions
+### 📊 2. ML-Powered Visa Predictions (USA H-1B)
 - **Real XGBoost Model** trained on 3 million H-1B visa applications from Kaggle
-- **Genuine Machine Learning** - not fake or rule-based
+- **74.4% Accuracy** on balanced dataset (genuine machine learning, not rules)
+- **Solved Dataset Imbalance** - 98.6% approval → 75/25 balanced training
 - **Risk Assessment** with personalized recommendations
-- **Interactive Dashboard** with Chart.js visualizations
-- **Approval Probability** calculations based on applicant profile
+- **Approval Probability** calculations based on 11 applicant features
 
-### 📄 3. Document Management System
-- **Secure Upload** for passport, diplomas, bank statements, etc.
+### 🍁 3. Canada Express Entry Calculator
+- **Official CRS Algorithm** implementation (max 1,200 points)
+- **Real-Time Scoring** for age, education, language, work experience
+- **Additional Points** - PNP (+600), job offer (+200), French (+50)
+- **Cutoff Comparison** - Recent draw at 491 points
+
+### 📄 4. Document Management System
+- **Secure Upload** via Supabase cloud storage
 - **File Organization** by document type
 - **Document Preview** and download functionality
 - **Delete Confirmation** modals for safety
-- **OCR Ready** - prepared for future text extraction
-
-### 📈 4. Professional Dashboard
-- **Real-time Statistics** on predictions and documents
-- **Chart.js Visualizations** (bar charts, pie charts)
-- **Recent Predictions** table with color-coded risk levels
-- **Quick Actions** for common tasks
-- **Responsive Design** for all devices
 
 ---
 
@@ -85,12 +84,14 @@
 
 ---
 
-## 🏗️ Architecture
+## 🏗 Architecture
+
+### Detailed Component Architecture
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │                   User Interface                    │
-│  (Bootstrap 5 + Custom CSS + Chart.js + HTMX)       │
+│        (Bootstrap 5 + Custom CSS + Chart.js )       │
 └───────────────────┬─────────────────────────────────┘
                     │
 ┌───────────────────▼─────────────────────────────────┐
@@ -116,7 +117,40 @@
 └──────────────┘ └─────────┘ └───────────┘
 ```
 
+### System Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        VisaGPT Platform                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐     ┌──────────────┐      ┌──────────────┐    │
+│  │   Frontend   │     │   Backend    │      │   Databases  │    │
+│  ├──────────────┤     ├──────────────┤      ├──────────────┤    │
+│  │ Bootstrap 5  │──▶ │   Django      │ ──▶ │ PostgreSQL   │    │
+│  │ Django       │     │ Class-Based  │      │ (Users,      │    │
+│  │ Templates    │     │    Views     │      │ Predictions, │    │
+│  │ JavaScript   │     │              │      │ Documents)   │    │
+│  └──────────────┘     └──────────────┘      └──────────────┘    │
+│         │                    │                    │             │
+│         ▼                    ▼                    ▼             │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐       │
+│  │  ML Models   │    │   AI/RAG     │    │   Storage    │       │
+│  ├──────────────┤    ├──────────────┤    ├──────────────┤       │
+│  │ XGBoost      │    │ OpenAI GPT-4 │    │ MongoDB      │       │
+│  │ H-1B Model   │    │ Embeddings   │    │ Atlas        │       │
+│  │ (74.4%)      │    │ Vector Search│    │ (Vector DB)  │       │
+│  │              │    │              │    │              │       │
+│  │ CRS Algo     │    │              │    │ Supabase     │       │
+│  │ (Canada)     │    │              │    │ (Documents)  │       │
+│  └──────────────┘    └──────────────┘    └──────────────┘       │
+│                                                                 │
+│  Deployment: Render + MongoDB Atlas + Supabase                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ### **Data Flow: Chat with RAG**
+
 ```
 User Query → Embedding → Vector Search → Relevant Docs
      ↓                                         ↓
@@ -129,7 +163,7 @@ AI Response → Save to Database → Display to User
 ```
 User Input → Feature Engineering → XGBoost Model
      ↓              ↓                    ↓
-  (Job, Salary, Education)    (6 features)  (Probability)
+  (Job, Salary, Education)    (11 features)  (Probability)
      ↓
 Risk Assessment → Recommendations → Save → Display
 ```
@@ -143,7 +177,7 @@ Risk Assessment → Recommendations → Save → Display
 - PostgreSQL 14+
 - MongoDB Atlas account (free tier)
 - OpenAI API key
-- Git
+- Supabase account (free tier)
 
 ### **1. Clone Repository**
 ```bash
@@ -247,28 +281,34 @@ Visit: `http://localhost:8000`
 
 ### **Dataset**
 - **Source:** Kaggle H-1B Visa Petitions (2011-2016)
-- **Records:** 3,002,458 applications
-- **Size:** 469 MB (not included in repo - see DATA_README.md)
+- **Total Records:** 3,002,458 applications
+- **Challenge:** 98.6% approval rate (severely imbalanced)
+- **Solution:** Balanced dataset with 75% approved, 25% denied
 - **Download:** https://www.kaggle.com/datasets/nsharan/h-1b-visa
 
-### **Model Performance**
+### **Model Performance (Balanced Dataset)**
 ```
 Algorithm: XGBoost Classifier
-Accuracy: 93.95%
-Precision: 94.2%
-Recall: 93.7%
-F1-Score: 93.9%
-Training Samples: 2,401,966
-Testing Samples: 600,492
+Accuracy: 74.4%
+Precision: 72.3% (approved), 78.1% (denied)
+Recall: 80.5% (approved), 68.9% (denied)
+F1-Score: 76.2% (approved), 73.2% (denied)
+Training Samples: ~2.25M (balanced)
+Testing Samples: 375,000 (balanced)
 ```
 
-### **Features Used**
-1. **IS_TECH_JOB** - Binary flag for tech occupations
-2. **WAGE_LEVEL** - Salary bracket (1-5)
-3. **IS_FULL_TIME** - Employment type
-4. **EMPLOYER_FREQUENCY** - Employer's historical applications
-5. **STATE_ENCODED** - Location encoding
-6. **SOC_ENCODED** - Occupation code encoding
+### **Features Used (11 Total)**
+1. **SALARY** - Annual salary (USD)
+2. **EMPLOYER_FREQUENCY** - Company approval history
+3. **EMPLOYMENT_TYPE_ENCODED** - Full-time vs Part-time
+4. **EMPLOYER_SIZE_ENCODED** - Startup → Fortune 500
+5. **STATE_ENCODED** - Work location
+6. **SOC_ENCODED** - Occupation code
+7. **AGE** - Applicant age
+8. **EDUCATION_ENCODED** - Bachelor's → PhD
+9. **EXPERIENCE** - Years of experience
+10. **DEGREE_RELEVANCE_ENCODED** - Exact → Unrelated
+11. **PREVIOUS_H1B_ENCODED** - First-time vs Transfer
 
 ### **Training Command**
 ```bash
@@ -363,7 +403,7 @@ VisaGPT/
 ## 🔑 Key Features Explained
 
 ### **1. Real Machine Learning**
-Unlike many hackathon projects that fake ML with rules, VisaGPT uses a **genuine XGBoost model** trained on 3 million real visa applications. The model achieves 93.95% accuracy through proper feature engineering and hyperparameter tuning.
+Unlike many hackathon projects that fake ML with rules, VisaGPT uses a **genuine XGBoost model** trained on 3 million real visa applications. The model achieves 74.4% accuracy on a balanced dataset through proper feature engineering and solving the 98.6% approval rate imbalance.
 
 ### **2. Authentic RAG System**
 The chatbot doesn't just call GPT-4 - it implements **true Retrieval-Augmented Generation**:
@@ -376,7 +416,7 @@ The chatbot doesn't just call GPT-4 - it implements **true Retrieval-Augmented G
 - **Class-Based Views** (not function views)
 - **Proper separation of concerns**
 - **Environment-based settings**
-- **Database migrations excluded** from repo
+- **Multi-database architecture** (PostgreSQL + MongoDB)
 - **Security best practices**
 
 ---
@@ -385,10 +425,11 @@ The chatbot doesn't just call GPT-4 - it implements **true Retrieval-Augmented G
 
 ### **VisaVerse AI Hackathon Themes**
 
-✅ **Global Mobility** - Removes barriers to international movement
-✅ **AI-Driven Solutions** - Genuine ML and RAG implementation
-✅ **Document Processing** - Intelligent document management
-✅ **User Experience** - Professional, intuitive interface
+✅ **Global Mobility** - Removes barriers to international movement  
+✅ **AI-Driven Solutions** - Genuine ML and RAG implementation  
+✅ **Document Processing** - Intelligent document management  
+✅ **User Experience** - Professional, intuitive interface  
+✅ **Multi-Country Support** - USA, Canada, UK, Australia
 
 ---
 
@@ -415,6 +456,7 @@ This project is licensed under the MIT License - see LICENSE file for details.
 **Hunain Raza**
 - GitHub: [@HunainRaza](https://github.com/HunainRaza)
 - Email: hunainrazazaidi@gmail.com
+- Live Demo: https://visagpt.onrender.com
 
 ---
 
